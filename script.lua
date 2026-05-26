@@ -1357,10 +1357,8 @@ end
 local function ub_loop()
     while Config.UB.Active do
         local ok, err = pcall(function()
-            
-            -- ============================================
-            -- STEP 1: EQUIP ROD (hanya sekali di awal, bukan tiap loop)
-            -- ============================================
+
+            -- STEP 1: Equip rod hanya sekali
             if needCast then
                 pcall(function()
                     if Events.equip then Events.equip:InvokeServer(1) end
@@ -1371,46 +1369,37 @@ local function ub_loop()
                 needCast = false
             end
 
-            -- ============================================
-            -- STEP 2: SKIP CAST ANIMATION (Quantum Maximum = no cast)
-            -- Langsung ke exclaim tanpa RF/CastFishingRod
-            -- ============================================
-            --[[ DIHAPUS: Cast animation tidak diperlukan di Quantum Maximum
+            -- STEP 2: Langsung tanda seru (SKIP cast/charge/minigame)
             pcall(function()
-                local castRemote = GetServerRemote("RF/CastFishingRod") or GetServerRemote("RF/StartFishing")
-                if castRemote then
-                    castRemote:InvokeServer()
-                end
-            end)
-            --]]
-
-            -- ============================================
-            -- STEP 3: TANDA SERU (Exclaim) - langsung tanpa cast
-            -- ============================================
-            pcall(function()
-                local exclaimRemote = Events.exclaimEvent or GetServerRemote("RE/ReplicateTextEffect")
+                local exclaimRemote = Events.exclaimEvent
                 if exclaimRemote then
                     local char = LocalPlayer.Character
                     local head = char and char:FindFirstChild("Head")
                     if head then
-                        local exclaimData = {
-                            TextData = {
-                                EffectType = "Exclaim",
-                                Text = "!",
-                                Color = Color3.fromRGB(255, 255, 0),
-                                Size = 1.5
-                            },
-                            Container = head,
-                            Position = head.Position
-                        }
                         local conns = {}
                         pcall(function() conns = getconnections(exclaimRemote.OnClientEvent) end)
                         for _, conn in ipairs(conns) do
                             if conn and conn.Function then
-                                pcall(function() conn.Function(exclaimData) end)
+                                pcall(function() conn.Function({
+                                    TextData = { EffectType = "Exclaim", Text = "!", Color = Color3.fromRGB(255,255,0), Size = 1.5 },
+                                    Container = head,
+                                    Position = head.Position
+                                }) end)
                             end
                         end
                     end
+                end
+            end)
+
+            -- STEP 3: Langsung catch (skip charge & minigame)
+            pcall(function()
+                if Config.UB.Remotes.FishingCompleted then
+                    Config.UB.Remotes.FishingCompleted:InvokeServer()
+                end
+            end)
+            pcall(function()
+                if Config.UB.Remotes.FishingCompletedRE then
+                    Config.UB.Remotes.FishingCompletedRE:FireServer()
                 end
             end)
 
