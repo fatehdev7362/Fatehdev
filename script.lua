@@ -965,15 +965,6 @@ local function FireLocalEvent(remote, ...)
     end)
 end
 
-local function deepCopyArr(t)
-    local out = {}
-    for i, v in ipairs(t) do
-        if type(v) == "table" then local c = {}; for k, val in pairs(v) do c[k] = val end; out[i] = c
-        else out[i] = v end
-    end
-    return out
-end
-
 local function HookRemote(humanName, storageKey)
     if _hookedRemotes[humanName] then return true end
     local remote = GetServerRemote(humanName)
