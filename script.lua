@@ -1354,7 +1354,7 @@ end
                     attempts = attempts + 1
                 until fakeFishId ~= (_G.LastFishId or 0) or attempts > 10
                 
-                _G.LastFishId = fakeFishname
+                _G.LastFishId = fakeFishId
             else
                 -- Fallback: Random manual
                 fakeFishId = math.random(1, 500)
@@ -1374,7 +1374,7 @@ end
                 while fakeFishId == (_G.LastFishId or 0) do
                     fakeFishId = math.random(1, 500)
                 end
-                _G.LastFishId = 0
+                _G.LastFishId = fakeFishId
             end
 
             -- Random Shiny (5% chance)
