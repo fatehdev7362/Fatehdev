@@ -640,6 +640,115 @@ _G.SavedData = _G.SavedData or {FishCaught = {}, CaughtVisual = {}, FishNotif = 
 _G.NotifQueue = _G.NotifQueue or {}
 _G.NotifActive = _G.NotifActive or 0
 
+-- ============================================
+-- ANTI-STACK NOTIF HOOK (BARU)
+-- ============================================
+pcall(function()
+    local notifController = ReplicatedStorage:FindFirstChild("Controllers") 
+        and ReplicatedStorage.Controllers:FindFirstChild("NotificationController")
+    if notifController then
+        local notifModule = require(notifController)
+        if notifModule and notifModule.DisplayNotification then
+            local oldDisplay = notifModule.DisplayNotification
+            notifModule.DisplayNotification = function(self, data, ...)
+                if data then
+                    data.StackKey = data.StackKey or HttpService:GenerateGUID(false)
+                    data.PreventMerge = true
+                    data.UniqueId = tick() .. math.random()
+                end
+                return oldDisplay(self, data, ...)
+            end
+        end
+    end
+end)
+
+-- ============================================
+-- ANTI-STACK FISH GENERATOR (BARU)
+-- ============================================
+local _notifUUIDCounter = 0
+
+local function generateUniqueFish()
+    _notifUUIDCounter = _notifUUIDCounter + 1
+    
+    local realFishList = {}
+    pcall(function()
+        if ItemUtility and ItemUtility.GetItemData then
+            for id = 1, 500 do
+                local data = ItemUtility:GetItemData(id)
+                if data and data.Data and data.Data.Type and string.lower(tostring(data.Data.Type)) == "fish" then
+                    table.insert(realFishList, {
+                        Id = id,
+                        Name = data.Data.Name or ("Fish_" .. id),
+                        Rarity = data.Data.Rarity or "COMMON",
+                        WeightMin = data.Data.MinWeight or 0.1,
+                        WeightMax = data.Data.MaxWeight or 100
+                    })
+                end
+            end
+        end
+    end)
+
+    local fakeFishId, fakeFishName, fakeRarity, fakeWeight
+    if #realFishList > 0 then
+        local attempts = 0
+        repeat
+            local randomIdx = math.random(1, #realFishList)
+            fakeFishId = realFishList[randomIdx].Id
+            fakeFishName = realFishList[randomIdx].Name
+            fakeRarity = realFishList[randomIdx].Rarity
+            local wMin = realFishList[randomIdx].WeightMin
+            local wMax = realFishList[randomIdx].WeightMax
+            fakeWeight = wMin + (math.random() * (wMax - wMin))
+            attempts = attempts + 1
+        until fakeFishId ~= (_G.LastFishId or 0) or attempts > 10
+        _G.LastFishId = fakeFishId
+    else
+        fakeFishId = math.random(1, 500)
+        fakeFishName = "Mysterious Fish " .. fakeFishId
+        fakeRarity = "COMMON"
+        local rarityRoll = math.random(1, 100)
+        if rarityRoll > 98 then fakeRarity = "SECRET"
+        elseif rarityRoll > 90 then fakeRarity = "Mythic"
+        elseif rarityRoll > 75 then fakeRarity = "Legendary"
+        elseif rarityRoll > 55 then fakeRarity = "Epic"
+        elseif rarityRoll > 35 then fakeRarity = "Rare"
+        elseif rarityRoll > 15 then fakeRarity = "Uncommon" end
+        fakeWeight = math.random(10, 5000) / 100
+        while fakeFishId == (_G.LastFishId or 0) do
+            fakeFishId = math.random(1, 500)
+        end
+        _G.LastFishId = fakeFishId
+    end
+
+    local isShiny = math.random(1, 100) <= 5
+    local mutations = {"Galaxy", "Corrupt", "Gemstone", "Fairy Dust", "Midnight", "Color Burn", "Holographic", "Lightning", "Radioactive", "Ghost", "Gold", "Frozen"}
+    local hasMutation = math.random(1, 100) <= 10
+    local mutationType = hasMutation and mutations[math.random(1, #mutations)] or nil
+
+    local uniqueUUID = HttpService:GenerateGUID(false) .. "-" .. tostring(_notifUUIDCounter) .. "-" .. tostring(tick())
+    
+    local fakeMetadata = {
+        Weight = fakeWeight,
+        Rarity = fakeRarity,
+        Shiny = isShiny,
+        VariantId = mutationType,
+        CaughtTime = os.time() - math.random(0, 3600),
+        CatchSequence = _notifUUIDCounter,
+        SessionId = tostring(_sessionStartTime)
+    }
+
+    return {
+        Id = fakeFishId,
+        Name = fakeFishName,
+        Rarity = fakeRarity,
+        Weight = fakeWeight,
+        Shiny = isShiny,
+        Mutation = mutationType,
+        UUID = uniqueUUID,
+        Metadata = fakeMetadata
+    }
+end
+
 -- ========== FREE CAM SYSTEM ==========
 local FreeCam = {}
 do
@@ -1241,37 +1350,73 @@ local function replayAmblatantNotif()
     end)
 end
 
- local function ub_loop()
+-- ============================================
+-- UB LOOP (QUANTUM MAXIMUM - 20 CPS)
+-- ============================================
+
+local function ub_loop()
     while Config.UB.Active do
         local ok, err = pcall(function()
-            -- ============================================
-            -- PHASE 1: FAKE CAST (Instant)
-            -- ============================================
             
+            -- ============================================
+            -- STEP 1: EQUIP ROD
+            -- ============================================
             pcall(function()
-                if Events.equip then
-                    Events.equip:InvokeServer(1)
-                end
+                if Events.equip then Events.equip:InvokeServer(1) end
             end)
-            
             pcall(function()
-                if Events.UpdateAutoFishing then
-                    Events.UpdateAutoFishing:InvokeServer(true)
+                if Events.UpdateAutoFishing then Events.UpdateAutoFishing:InvokeServer(true) end
+            end)
+
+            -- ============================================
+            -- STEP 2: CAST (Animasi Ngelempar)
+            -- ============================================
+            pcall(function()
+                local castRemote = GetServerRemote("RF/CastFishingRod") or GetServerRemote("RF/StartFishing")
+                if castRemote then
+                    castRemote:InvokeServer()
                 end
             end)
 
             -- ============================================
-            -- PHASE 2: FAKE CHARGE + MINIGAME (Burst)
+            -- STEP 3: TANDA SERU (Exclaim)
             -- ============================================
-            
+            pcall(function()
+                local exclaimRemote = Events.exclaimEvent or GetServerRemote("RE/ReplicateTextEffect")
+                if exclaimRemote then
+                    local char = LocalPlayer.Character
+                    local head = char and char:FindFirstChild("Head")
+                    if head then
+                        local exclaimData = {
+                            TextData = {
+                                EffectType = "Exclaim",
+                                Text = "!",
+                                Color = Color3.fromRGB(255, 255, 0),
+                                Size = 1.5
+                            },
+                            Container = head,
+                            Position = head.Position
+                        }
+                        local conns = {}
+                        pcall(function() conns = getconnections(exclaimRemote.OnClientEvent) end)
+                        for _, conn in ipairs(conns) do
+                            if conn and conn.Function then
+                                pcall(function() conn.Function(exclaimData) end)
+                            end
+                        end
+                    end
+                end
+            end)
+
+            -- ============================================
+            -- STEP 4: CHARGE + MINIGAME
+            -- ============================================
             local fakeTime = tick()
-            
             pcall(function()
                 if Config.UB.Remotes.ChargeFishingRod then
                     Config.UB.Remotes.ChargeFishingRod:InvokeServer({fakeTime})
                 end
             end)
-            
             pcall(function()
                 if Config.UB.Remotes.RequestMinigame then
                     Config.UB.Remotes.RequestMinigame:InvokeServer(1, 0, fakeTime)
@@ -1279,15 +1424,13 @@ end
             end)
 
             -- ============================================
-            -- PHASE 3: FAKE CATCH (Fire & Forget)
+            -- STEP 5: CATCH (Server Side)
             -- ============================================
-            
             pcall(function()
                 if Config.UB.Remotes.FishingCompleted then
                     Config.UB.Remotes.FishingCompleted:InvokeServer()
                 end
             end)
-            
             pcall(function()
                 if Config.UB.Remotes.FishingCompletedRE then
                     Config.UB.Remotes.FishingCompletedRE:FireServer()
@@ -1295,260 +1438,179 @@ end
             end)
 
             -- ============================================
-            -- PHASE 4: GENERATE RANDOM FISH (ANTI-SAME)
+            -- STEP 6: GENERATE FISH
             -- ============================================
+            local fish = generateUniqueFish()
             
-            -- Increment counters
             rainbowCount = (rainbowCount or 0) + 1
             if rainbowCount > 40 then rainbowCount = 0 end
-            
             goldenCount = (goldenCount or 0) + 1
             if goldenCount > 10 then goldenCount = 0 end
-            
             fishCount = (fishCount or 0) + 1
 
-            -- RANDOM FISH GENERATOR (Anti-Same)
-            local fakeFishId, fakeFishName, fakeRarity, fakeWeight
-            
-            -- Method 1: Dari ItemUtility (kalau ada)
-            local realFishList = {}
+            -- ============================================
+            -- STEP 7: ANIMASI DAPET IKAN (FishCaught)
+            -- ============================================
+            local playerName = LocalPlayer.Name
+            local visualArgs = {
+                playerName,
+                fish.Id,
+                fish.Name,
+                fish.Rarity,
+                fish.Weight,
+                fish.Shiny,
+                fish.Mutation,
+                fish.UUID
+            }
+
             pcall(function()
-                if ItemUtility and ItemUtility.GetItemData then
-                    -- Scan ID 1-500 untuk cari fish valid
-                    for id = 1, 500 do
-                        local data = ItemUtility:GetItemData(id)
-                        if data and data.Data and data.Data.Type and string.lower(tostring(data.Data.Type)) == "fish" then
-                            table.insert(realFishList, {
-                                Id = id,
-                                Name = data.Data.Name or ("Fish_" .. id),
-                                Rarity = data.Data.Rarity or "COMMON",
-                                WeightMin = data.Data.MinWeight or 0.1,
-                                WeightMax = data.Data.MaxWeight or 100
-                            })
+                local xr_caught = GetServerRemote("RE/FishCaught")
+                if xr_caught then
+                    local conns = {}
+                    pcall(function() conns = getconnections(xr_caught.OnClientEvent) end)
+                    for _, conn in ipairs(conns) do
+                        if conn and conn.Function then
+                            pcall(function() conn.Function(unpack(visualArgs)) end)
                         end
                     end
                 end
             end)
 
-            -- Pilih random dari list (atau fallback)
-            if #realFishList > 0 then
-                -- Pilih yang BEDA dari sebelumnya
-                local attempts = 0
-                repeat
-                    local randomIdx = math.random(1, #realFishList)
-                    fakeFishId = realFishList[randomIdx].Id
-                    fakeFishName = realFishList[randomIdx].Name
-                    fakeRarity = realFishList[randomIdx].Rarity
-                    local wMin = realFishList[randomIdx].WeightMin
-                    local wMax = realFishList[randomIdx].WeightMax
-                    fakeWeight = wMin + (math.random() * (wMax - wMin))
-                    attempts = attempts + 1
-                until fakeFishId ~= (_G.LastFishId or 0) or attempts > 10
-                
-                _G.LastFishId = fakeFishId
-            else
-                -- Fallback: Random manual
-                fakeFishId = math.random(1, 500)
-                fakeFishName = "Mysterious Fish " .. fakeFishId
-                fakeRarity = "COMMON"
-                local rarityRoll = math.random(1, 100)
-                if rarityRoll > 98 then fakeRarity = "SECRET"
-                elseif rarityRoll > 90 then fakeRarity = "Mythic"
-                elseif rarityRoll > 75 then fakeRarity = "Legendary"
-                elseif rarityRoll > 55 then fakeRarity = "Epic"
-                elseif rarityRoll > 35 then fakeRarity = "Rare"
-                elseif rarityRoll > 15 then fakeRarity = "Uncommon" end
-                
-                fakeWeight = math.random(10, 5000) / 100
-                
-                -- Anti-same: pastiin beda dari sebelumnya
-                while fakeFishId == (_G.LastFishId or 0) do
-                    fakeFishId = math.random(1, 500)
+            -- ============================================
+            -- STEP 8: EFEK VISUAL IKAN (CaughtFishVisual)
+            -- ============================================
+            pcall(function()
+                local xr_visual = GetServerRemote("RE/CaughtFishVisual")
+                if xr_visual then
+                    local conns = {}
+                    pcall(function() conns = getconnections(xr_visual.OnClientEvent) end)
+                    for _, conn in ipairs(conns) do
+                        if conn and conn.Function then
+                            pcall(function() conn.Function(unpack(visualArgs)) end)
+                        end
+                    end
                 end
-                _G.LastFishId = fakeFishId
-            end
-
-            -- Random Shiny (5% chance)
-            local isShiny = math.random(1, 100) <= 5
-
-            -- Random Mutations (10% chance)
-            local mutations = {"Galaxy", "Corrupt", "Gemstone", "Fairy Dust", "Midnight", "Color Burn", "Holographic", "Lightning", "Radioactive", "Ghost", "Gold", "Frozen"}
-            local hasMutation = math.random(1, 100) <= 10
-            local mutationType = hasMutation and mutations[math.random(1, #mutations)] or nil
-
-            -- Build Metadata
-            local fakeMetadata = {
-                Weight = fakeWeight,
-                Rarity = fakeRarity,
-                Shiny = isShiny,
-                VariantId = mutationType,
-                -- Random timestamp biar beda
-                CaughtTime = os.time() - math.random(0, 3600)
-            }
-
-            -- Generate UUID (unique tiap catch)
-            local fakeUUID = HttpService:GenerateGUID(false)
+            end)
 
             -- ============================================
-            -- PHASE 5: BUILD VISUAL ARGS (Unique tiap loop)
+            -- STEP 9: NOTIF INVENTORY (Anti-Stack)
             -- ============================================
-            
-            local playerName = LocalPlayer.Name
-            
-            -- Visual args (RE/FishCaught format)
-            local visualArgs = {
-                playerName,           -- [1] Player Name
-                fakeFishId,           -- [2] Fish ID
-                fakeFishName,         -- [3] Fish Name
-                fakeRarity,           -- [4] Rarity
-                fakeWeight,           -- [5] Weight
-                isShiny,              -- [6] Is Shiny
-                mutationType,         -- [7] Mutation (optional)
-                fakeUUID              -- [8] UUID (optional)
-            }
-
-            -- Notif args (RE/ObtainedNewFishNotification format)
             local notifArgs = {
                 playerName,
                 {
-                    Id = fakeFishId,
-                    Metadata = fakeMetadata
+                    Id = fish.Id,
+                    Metadata = fish.Metadata,
+                    StackId = fish.UUID,
+                    IsNew = true
                 },
                 {
                     InventoryItem = {
-                        UUID = fakeUUID,
-                        Id = fakeFishId,
-                        Metadata = fakeMetadata,
-                        -- Fake timestamp biar beda
-                        CreatedAt = tick()
+                        UUID = fish.UUID,
+                        Id = fish.Id,
+                        Metadata = fish.Metadata,
+                        CreatedAt = tick(),
+                        StackKey = fish.UUID
                     }
                 }
             }
 
-            -- Update global cache (untuk replay)
-            lastValidFishCaught = deepCopyArr(visualArgs)
-            lastValidCaughtVisual = deepCopyArr(visualArgs)
-            lastValidFishNotif = deepCopyArr(notifArgs)
-            
-            _G.SavedData.FishCaught = visualArgs
-            _G.SavedData.CaughtVisual = visualArgs
-            _G.SavedData.FishNotif = notifArgs
-
-            -- ============================================
-            -- PHASE 6: FIRE VISUAL EVENTS (Local Direct)
-            -- ============================================
-            
-            task.spawn(function()
-                -- Fire RE/FishCaught (animasi dapet ikan)
-                pcall(function()
-                    local xr_caught = GetServerRemote("RE/FishCaught")
-                    if xr_caught then
-                        local conns = {}
-                        pcall(function() conns = getconnections(xr_caught.OnClientEvent) end)
-                        for _, conn in ipairs(conns) do
-                            if conn and conn.Function then
-                                task.spawn(function()
-                                    pcall(function() conn.Function(unpack(visualArgs)) end)
-                                end)
-                            end
+            pcall(function()
+                local xr_notif = Events.fishNotif
+                if xr_notif then
+                    local conns = {}
+                    pcall(function() conns = getconnections(xr_notif.OnClientEvent) end)
+                    for _, conn in ipairs(conns) do
+                        if conn and conn.Function then
+                            pcall(function() conn.Function(unpack(notifArgs)) end)
                         end
                     end
-                end)
-                
-                task.wait(0.02)
-                
-                -- Fire RE/CaughtFishVisual (efek visual)
-                pcall(function()
-                    local xr_visual = GetServerRemote("RE/CaughtFishVisual")
-                    if xr_visual then
-                        local conns = {}
-                        pcall(function() conns = getconnections(xr_visual.OnClientEvent) end)
-                        for _, conn in ipairs(conns) do
-                            if conn and conn.Function then
-                                task.spawn(function()
-                                    pcall(function() conn.Function(unpack(visualArgs)) end)
-                                end)
-                            end
-                        end
-                    end
-                end)
-                
-                task.wait(0.02)
-                
-                -- Fire RE/ObtainedNewFishNotification (notif UI)
-                pcall(function()
-                    local xr_notif = Events.fishNotif
-                    if xr_notif then
-                        local conns = {}
-                        pcall(function() conns = getconnections(xr_notif.OnClientEvent) end)
-                        for _, conn in ipairs(conns) do
-                            if conn and conn.Function then
-                                task.spawn(function()
-                                    pcall(function() conn.Function(unpack(notifArgs)) end)
-                                end)
-                            end
-                        end
-                    end
-                end)
+                end
             end)
 
             -- ============================================
-            -- PHASE 7: FORCE RAINBOW/GOLDEN UPDATE
+            -- STEP 10: TEXT NOTIFIKASI ATAS
             -- ============================================
-            
-            task.spawn(function()
-                pcall(function()
-                    -- Cari Replion Set remote
-                    local replionFolder = ReplicatedStorage:FindFirstChild("Packages")
-                    if replionFolder then
-                        local idx = replionFolder:FindFirstChild("_Index")
-                        if idx then
-                            for _, child in ipairs(idx:GetChildren()) do
-                                if child.Name:find("ytrev_replion") then
-                                    local replionMod = child:FindFirstChild("replion")
-                                    if replionMod then
-                                        local remotes = replionMod:FindFirstChild("Remotes")
-                                        if remotes then
-                                            local setRemote = remotes:FindFirstChild("Set")
-                                            if setRemote and setRemote:IsA("RemoteEvent") then
-                                                -- Fire fake update
-                                                setRemote:FireServer("Data", {"Modifiers", "Rainbow"}, rainbowCount)
-                                                task.wait(0.01)
-                                                setRemote:FireServer("Data", {"Modifiers", "Golden"}, goldenCount)
-                                            end
+            pcall(function()
+                local textNotifRemote = Events.TextNotification or GetServerRemote("RE/TextNotification")
+                if textNotifRemote then
+                    local rarityColor = {
+                        COMMON = Color3.fromRGB(169, 169, 169),
+                        UNCOMMON = Color3.fromRGB(0, 255, 0),
+                        RARE = Color3.fromRGB(0, 112, 221),
+                        EPIC = Color3.fromRGB(163, 53, 238),
+                        LEGENDARY = Color3.fromRGB(255, 165, 0),
+                        MYTHIC = Color3.fromRGB(255, 0, 0),
+                        SECRET = Color3.fromRGB(255, 215, 0),
+                        FORGOTTEN = Color3.fromRGB(148, 0, 211)
+                    }
+                    
+                    local textData = {
+                        Title = "Fish Caught!",
+                        Text = fish.Name .. " [" .. fish.Rarity .. "] " .. string.format("%.2fkg", fish.Weight),
+                        SubText = fish.Shiny and "✨ SHINY!" or (fish.Mutation and "✦ " .. fish.Mutation or ""),
+                        Duration = 3,
+                        Color = rarityColor[fish.Rarity] or Color3.fromRGB(57, 255, 20),
+                        NotifId = fish.UUID,
+                        PreventStack = true
+                    }
+                    local conns = {}
+                    pcall(function() conns = getconnections(textNotifRemote.OnClientEvent) end)
+                    for _, conn in ipairs(conns) do
+                        if conn and conn.Function then
+                            pcall(function() conn.Function(textData) end)
+                        end
+                    end
+                end
+            end)
+
+            -- ============================================
+            -- STEP 11: RAINBOW/GOLDEN UPDATE
+            -- ============================================
+            pcall(function()
+                local replionFolder = ReplicatedStorage:FindFirstChild("Packages")
+                if replionFolder then
+                    local idx = replionFolder:FindFirstChild("_Index")
+                    if idx then
+                        for _, child in ipairs(idx:GetChildren()) do
+                            if child.Name:find("ytrev_replion") then
+                                local replionMod = child:FindFirstChild("replion")
+                                if replionMod then
+                                    local remotes = replionMod:FindFirstChild("Remotes")
+                                    if remotes then
+                                        local setRemote = remotes:FindFirstChild("Set")
+                                        if setRemote and setRemote:IsA("RemoteEvent") then
+                                            setRemote:FireServer("Data", {"Modifiers", "Rainbow"}, rainbowCount)
+                                            setRemote:FireServer("Data", {"Modifiers", "Golden"}, goldenCount)
                                         end
                                     end
-                                    break
                                 end
+                                break
                             end
                         end
                     end
-                end)
+                end
             end)
 
             -- ============================================
-            -- PHASE 8: STATS & COOLDOWN
+            -- STEP 12: STATS
             -- ============================================
-            
             _sessionCatchCount = _sessionCatchCount + 1
             table.insert(_lastCatchTimestamps, tick())
             if #_lastCatchTimestamps > 60 then table.remove(_lastCatchTimestamps, 1) end
-            
             blatantFishCycleCount = blatantFishCycleCount + 1
 
-            -- RANDOMIZE delay biar ga kena pattern detection
-            local baseDelay = Config.UB.Settings.CompleteDelay or 0.05
-            local randomDelay = baseDelay + (math.random(-5, 15) / 1000)
-            task.wait(math.max(randomDelay, 0.03))
+            -- ============================================
+            -- STEP 13: DELAY (0.05 = ~20 CPS)
+            -- ============================================
+            task.wait(0.05)
         end)
 
         if not ok then
-            -- Silent error
-            task.wait(0.03)
+            -- Silent error, continue loop
         end
     end
 end
-                
+                                    
 local function UB_start()
     if Config.UB.Active then return end
     UB_init(); Config.UB.Active = true; needCast = true
