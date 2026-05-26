@@ -4814,7 +4814,7 @@ VisualTab:Section({ Title = "Auto Forgotten" })
             end
         })
         VisualTab:Toggle({
-            Title = "🔐 Auto Forgotten", Value = false,
+            Title = "Auto Forgotten", Value = false,
             Callback = function(val)
                 if not _forgottenUnlocked then
                     NotifyError("Auto Forgotten", "Masukkan key dulu!")
@@ -4847,7 +4847,7 @@ VisualTab:Section({ Title = "Auto Forgotten" })
             end
         })
         VisualTab:Toggle({
-            Title = "🔐 Auto Secret", Value = false,
+            Title = "Auto Secret", Value = false,
             Callback = function(val)
                 if not _secretUnlocked then
                     NotifyError("Auto Secret", "Masukkan key dulu!")
