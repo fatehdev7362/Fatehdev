@@ -1359,27 +1359,33 @@ local function ub_loop()
         local ok, err = pcall(function()
             
             -- ============================================
-            -- STEP 1: EQUIP ROD
+            -- STEP 1: EQUIP ROD (hanya sekali di awal, bukan tiap loop)
             -- ============================================
-            pcall(function()
-                if Events.equip then Events.equip:InvokeServer(1) end
-            end)
-            pcall(function()
-                if Events.UpdateAutoFishing then Events.UpdateAutoFishing:InvokeServer(true) end
-            end)
+            if needCast then
+                pcall(function()
+                    if Events.equip then Events.equip:InvokeServer(1) end
+                end)
+                pcall(function()
+                    if Events.UpdateAutoFishing then Events.UpdateAutoFishing:InvokeServer(true) end
+                end)
+                needCast = false
+            end
 
             -- ============================================
-            -- STEP 2: CAST (Animasi Ngelempar)
+            -- STEP 2: SKIP CAST ANIMATION (Quantum Maximum = no cast)
+            -- Langsung ke exclaim tanpa RF/CastFishingRod
             -- ============================================
+            --[[ DIHAPUS: Cast animation tidak diperlukan di Quantum Maximum
             pcall(function()
                 local castRemote = GetServerRemote("RF/CastFishingRod") or GetServerRemote("RF/StartFishing")
                 if castRemote then
                     castRemote:InvokeServer()
                 end
             end)
+            --]]
 
             -- ============================================
-            -- STEP 3: TANDA SERU (Exclaim)
+            -- STEP 3: TANDA SERU (Exclaim) - langsung tanpa cast
             -- ============================================
             pcall(function()
                 local exclaimRemote = Events.exclaimEvent or GetServerRemote("RE/ReplicateTextEffect")
@@ -1409,7 +1415,7 @@ local function ub_loop()
             end)
 
             -- ============================================
-            -- STEP 4: CHARGE + MINIGAME
+            -- STEP 4: CHARGE + MINIGAME (langsung)
             -- ============================================
             local fakeTime = tick()
             pcall(function()
@@ -1438,7 +1444,7 @@ local function ub_loop()
             end)
 
             -- ============================================
-            -- STEP 6: GENERATE FISH
+            -- STEP 6-11: GENERATE FISH + NOTIFIKASI (sama)
             -- ============================================
             local fish = generateUniqueFish()
             
@@ -1448,9 +1454,7 @@ local function ub_loop()
             if goldenCount > 10 then goldenCount = 0 end
             fishCount = (fishCount or 0) + 1
 
-            -- ============================================
-            -- STEP 7: ANIMASI DAPET IKAN (FishCaught)
-            -- ============================================
+            -- FishCaught visual
             local playerName = LocalPlayer.Name
             local visualArgs = {
                 playerName,
@@ -1476,9 +1480,7 @@ local function ub_loop()
                 end
             end)
 
-            -- ============================================
-            -- STEP 8: EFEK VISUAL IKAN (CaughtFishVisual)
-            -- ============================================
+            -- CaughtFishVisual
             pcall(function()
                 local xr_visual = GetServerRemote("RE/CaughtFishVisual")
                 if xr_visual then
@@ -1492,9 +1494,7 @@ local function ub_loop()
                 end
             end)
 
-            -- ============================================
-            -- STEP 9: NOTIF INVENTORY (Anti-Stack)
-            -- ============================================
+            -- Notif inventory (Anti-Stack)
             local notifArgs = {
                 playerName,
                 {
@@ -1527,9 +1527,7 @@ local function ub_loop()
                 end
             end)
 
-            -- ============================================
-            -- STEP 10: TEXT NOTIFIKASI ATAS
-            -- ============================================
+            -- Text notifikasi atas
             pcall(function()
                 local textNotifRemote = Events.TextNotification or GetServerRemote("RE/TextNotification")
                 if textNotifRemote then
@@ -1547,7 +1545,7 @@ local function ub_loop()
                     local textData = {
                         Title = "Fish Caught!",
                         Text = fish.Name .. " [" .. fish.Rarity .. "] " .. string.format("%.2fkg", fish.Weight),
-                        SubText = fish.Shiny and "✨ SHINY!" or (fish.Mutation and "✦ " .. fish.Mutation or ""),
+                        SubText = fish.Shiny and "SHINY!" or (fish.Mutation and "✦ " .. fish.Mutation or ""),
                         Duration = 3,
                         Color = rarityColor[fish.Rarity] or Color3.fromRGB(57, 255, 20),
                         NotifId = fish.UUID,
@@ -1563,9 +1561,7 @@ local function ub_loop()
                 end
             end)
 
-            -- ============================================
-            -- STEP 11: RAINBOW/GOLDEN UPDATE
-            -- ============================================
+            -- Rainbow/Golden update
             pcall(function()
                 local replionFolder = ReplicatedStorage:FindFirstChild("Packages")
                 if replionFolder then
@@ -1591,17 +1587,13 @@ local function ub_loop()
                 end
             end)
 
-            -- ============================================
-            -- STEP 12: STATS
-            -- ============================================
+            -- Stats
             _sessionCatchCount = _sessionCatchCount + 1
             table.insert(_lastCatchTimestamps, tick())
             if #_lastCatchTimestamps > 60 then table.remove(_lastCatchTimestamps, 1) end
             blatantFishCycleCount = blatantFishCycleCount + 1
 
-            -- ============================================
-            -- STEP 13: DELAY (0.05 = ~20 CPS)
-            -- ============================================
+            -- Delay (0.05 = ~20 CPS)
             task.wait(0.05)
         end)
 
