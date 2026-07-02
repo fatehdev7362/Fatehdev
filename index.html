@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<meta name="description" content="Draigy Bio - Independent Developer & Systems Architect">
+<meta name="keywords" content="Draigy, Developer, Bio, Discord, Portfolio">
+<meta name="author" content="Draigy">
+<meta name="robots" content="index, follow">
+
+<!-- Open Graph / Social Share -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://draigy.bio">
+<meta property="og:title" content="Draigy | Bio">
+<meta property="og:description" content="Independent Developer · Systems Architect · Tech Enthusiast">
+<meta property="og:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Anonymous_emblem.svg/512px-Anonymous_emblem.svg.png">
+<meta property="og:image:width" content="512">
+<meta property="og:image:height" content="512">
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://draigy.bio">
+<meta property="twitter:title" content="Draigy | Bio">
+<meta property="twitter:description" content="Independent Developer · Systems Architect · Tech Enthusiast">
+<meta property="twitter:image" content="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Anonymous_emblem.svg/512px-Anonymous_emblem.svg.png">
+
+<title>Draigy | Bio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+    --ease-smooth: cubic-bezier(0.23, 1, 0.32, 1);
+    --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --url-team-anonymous: url("https://files.catbox.moe/icbhhz.png");
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+
+html, body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: #000;
+    color: #fff;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    -webkit-backface-visibility: hidden;
+    -webkit-overflow-scrolling: touch;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+/* ========== ENTER SCREEN ========== */
+#enterOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: opacity 1.2s var(--ease-out-expo), transform 1.2s var(--ease-out-expo), visibility 1.2s;
+    will-change: opacity, transform;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    visibility: visible;
+}
+#enterOverlay.hidden {
+    opacity: 0;
+    transform: scale(1.08) translateZ(0);
+    -webkit-transform: scale(1.08) translateZ(0);
+    pointer-events: none;
+    visibility: hidden;
+}
+.enter-text {
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(1.5rem, 4vw, 2.5rem);
+    font-weight: 300;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, 0.9);
+    animation: enterPulse 2.5s ease-in-out infinite;
+    will-change: opacity;
+    transform: translateZ(0);
+    -webkit-user-select: none;
+    user-select: none;
+}
+@keyframes enterPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+/* ========== VIDEO BACKGROUND — ULTRA PERFORMANCE ========== */
+.video-container {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    overflow: hidden;
+    contain: strict;
+    background: #000;
+    isolation: isolate;
+}
+.video-container video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: cover;
+    transform: translate(-50%, -50%) translateZ(0) scale(1.001);
+    -webkit-transform: translate(-50%, -50%) translateZ(0) scale(1.001);
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
+    image-rendering: auto;
+    -webkit-image-rendering: auto;
+    decoding: async;
+    -webkit-playsinline: true;
+    playsinline: true;
+    x-webkit-airplay: allow;
+    preload: auto;
+    /* GPU layers */
+    -webkit-perspective: 1000;
+    perspective: 1000;
+}
+.video-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.03) 0%, rgba(0,0,0,0.12) 100%);
+    pointer-events: none;
+    contain: strict;
+    mix-blend-mode: normal;
+}
+
+/* ========== MAIN CONTAINER ========== */
+.main-container {
+    position: relative;
+    z-index: 10;
+    width: 90%;
+    max-width: 420px;
+    perspective: 1200px;
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-smooth);
+    contain: layout style;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.main-container.active {
+    opacity: 1;
+}
+
+.bio-card {
+    background: transparent;
+    border: none;
+    padding: clamp(1.5rem, 4vh, 2.5rem);
+    transform-style: preserve-3d;
+    opacity: 0;
+    transform: translateY(50px) scale(0.94);
+    transition: opacity 1.2s var(--ease-smooth), transform 1.2s var(--ease-smooth);
+    will-change: transform, opacity;
+    contain: layout style paint;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.bio-card.revealed {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* ========== CARDS (STAGGERED REVEAL) ========== */
+.widget-card {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 1rem 1.3rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    margin-bottom: 0.7rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s var(--ease-smooth);
+    will-change: transform;
+    contain: layout style;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 380px;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.bio-card.revealed .widget-card {
+    opacity: 1;
+    transform: translateX(0);
+}
+.widget-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+.widget-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+}
+.widget-card:hover::before {
+    opacity: 1;
+}
+
+.discord-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 1.5px solid rgba(255,255,255,0.15);
+    flex-shrink: 0;
+    transition: transform 0.5s var(--ease-smooth), border-color 0.5s ease;
+    will-change: transform;
+    box-shadow: 0 0 15px rgba(255,255,255,0.05);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.widget-card:hover .discord-avatar {
+    transform: scale(1.12);
+    border-color: rgba(255,255,255,0.35);
+}
+.discord-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+    gap: 2px;
+}
+.discord-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.95);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.4);
+    line-height: 1.3;
+}
+.discord-status {
+    font-size: 0.55rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.4);
+    font-weight: 500;
+    line-height: 1.2;
+}
+.discord-icon {
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
+    margin-left: auto;
+    opacity: 0.9;
+    transition: opacity 0.4s var(--ease-smooth), transform 0.4s var(--ease-smooth);
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.widget-card:hover .discord-icon {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+/* ========== RICH PRESENCE — EXACT DISCORD ========== */
+.rp-card {
+    padding: 1rem 1.3rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 20px;
+    margin-bottom: 0.7rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s var(--ease-smooth) 0.1s;
+    will-change: transform;
+    contain: layout style;
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 380px;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.bio-card.revealed .rp-card {
+    opacity: 1;
+    transform: translateX(0);
+}
+.rp-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+.rp-card:hover {
+    transform: translateY(-3px) scale(1.02);
+    border-color: rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.06);
+}
+.rp-card:hover::before {
+    opacity: 1;
+}
+
+.rp-header {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #f2f3f5;
+    margin-bottom: 10px;
+    line-height: 1.3;
+}
+
+.rp-body {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.rp-icon-wrap {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    flex-shrink: 0;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.rp-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    object-fit: contain;
+    background: #1e1f22;
+    border: 1px solid rgba(255,255,255,0.06);
+    display: block;
+    padding: 6px;
+}
+.rp-small-icon {
+    position: absolute;
+    bottom: -4px;
+    right: -4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #1e1f22;
+    border: 2px solid rgba(24,25,28,0.9);
+    padding: 2px;
+    z-index: 2;
+    object-fit: contain;
+    display: block;
+}
+
+.rp-info { 
+    flex: 1; 
+    min-width: 0; 
+    text-align: left; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 1px; 
+}
+.rp-title {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: #f2f3f5;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rp-detail {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    color: #dbdee1;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.rp-state {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    color: #dbdee1;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* TIME — BOLD, #3BA55D, NO ELAPSED */
+.rp-time {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-size: 14px;
+    color: #3ba55d;
+    font-weight: 700;
+    margin-top: 2px;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* GAMEPAD ICON — PNG GREEN #3BA55D */
+.rp-gamepad {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    filter: brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
+    -webkit-filter: brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%);
+}
+.rp-gamepad img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* ========== STATS ========== */
+.stats {
+    display: flex;
+    justify-content: center;
+    margin: 16px 0;
+    padding: 8px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s var(--ease-smooth) 0.2s;
+    width: 100%;
+    max-width: 380px;
+}
+.bio-card.revealed .stats {
+    opacity: 1;
+    transform: translateX(0);
+}
+.stat { text-align: center; }
+.stat-value {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #cbd5e1;
+    line-height: 1;
+    margin-bottom: 3px;
+}
+.stat-value svg { color: rgba(255,255,255,0.6); width: 12px; height: 12px; }
+.stat-label { font-size: 8px; color: rgba(255,255,255,0.4); text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; }
+
+/* ========== SECTIONS ========== */
+.section {
+    margin-bottom: 1.2rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s var(--ease-smooth);
+    width: 100%;
+    max-width: 380px;
+}
+.bio-card.revealed .section {
+    opacity: 1;
+    transform: translateX(0);
+}
+.section-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 1.2rem;
+    text-align: center;
+    font-weight: 500;
+    text-shadow: 0 1px 10px rgba(0,0,0,0.5);
+}
+.grid-flex {
+    display: flex;
+    justify-content: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+}
+.icon-item {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 7px;
+    position: relative;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: all 0.8s var(--ease-smooth);
+    will-change: transform;
+    contain: layout style;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+}
+.bio-card.revealed .icon-item {
+    opacity: 1;
+    transform: translateX(0);
+}
+.icon-item:hover {
+    transform: translateY(-3px) scale(1.05);
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+.icon-item img, .icon-item svg { width: 100%; height: 100%; object-fit: contain; }
+.icon-item.team-btn { border-radius: 50%; width: 46px; height: 46px; padding: 0px; overflow: hidden; }
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 480px) {
+    .main-container { width: 92%; }
+    .widget-card, .rp-card, .stats, .section { max-width: 100%; }
+    .icon-item { width: 36px; height: 36px; }
+    .icon-item.team-btn { width: 42px; height: 42px; }
+    .rp-icon-wrap { width: 50px; height: 50px; }
+    .rp-icon { width: 50px; height: 50px; padding: 4px; }
+    .rp-small-icon { width: 16px; height: 16px; }
+    .discord-avatar { width: 44px; height: 44px; }
+    .discord-name { font-size: 0.95rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+    .video-container video { transform: none !important; }
+}
+
+/* ========== TOUCH OPTIMIZATION ========== */
+@media (hover: none) and (pointer: coarse) {
+    .widget-card:hover, .rp-card:hover, .icon-item:hover {
+        transform: none !important;
+    }
+    .widget-card:hover::before, .rp-card:hover::before {
+        opacity: 0 !important;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- ENTER SCREEN -->
+<div id="enterOverlay" role="button" aria-label="Enter page">
+    <div class="enter-text">Click to Enter</div>
+</div>
+
+<!-- VIDEO BACKGROUND -->
+<div class="video-container">
+    <video id="bgVideo" muted playsinline preload="auto" crossorigin="anonymous" decoding="async" poster="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+        <source src="https://files.catbox.moe/kdasz6.mp4" type="video/mp4">
+    </video>
+</div>
+<div class="video-overlay"></div>
+
+<!-- MAIN CONTENT -->
+<div class="main-container" id="mainContainer">
+    <div class="bio-card" id="bioCard">
+
+        <!-- DISCORD STATUS -->
+        <div class="widget-card" id="discordCard">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a6/Anonymous_emblem.svg/512px-Anonymous_emblem.svg.png" alt="Discord" class="discord-avatar" id="discordAvatar" decoding="async" loading="eager">
+            <div class="discord-info" style="min-width:0;flex:1;">
+                <div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;min-width:0;">
+                    <div class="discord-name" id="discordName" style="flex-shrink:0;">Draigy</div>
+                    <img src="https://raw.githubusercontent.com/fatehdev7362/Fatehdev/refs/heads/main/Picsart_26-07-03_03-53-21-759-removebg-preview.png" alt="Server Tag" style="width:44px;height:44px;object-fit:contain;display:block;flex-shrink:0;filter:drop-shadow(0 0 6px rgba(255,255,255,0.3));" decoding="async" loading="eager">
+                </div>
+                <div class="discord-status" id="discordStatus">Active</div>
+            </div>
+            <svg class="discord-icon" viewBox="0 0 71 55" fill="none" style="width:28px;height:28px;flex-shrink:0;margin-left:auto;opacity:0.9;transition:opacity 0.4s var(--ease-smooth),transform 0.4s var(--ease-smooth);">
+                <path d="M60.1 4.9A58.5 58.5 0 0 0 45.4 0c-.6 1.1-1.3 2.6-1.8 3.7a54.2 54.2 0 0 0-16.2 0c-.5-1.1-1.2-2.6-1.8-3.7A58.7 58.7 0 0 0 10.9 5C1.5 20.5-1 35.4.8 50.1c6.6 4.9 13 7.8 19.3 8.8 1.6-2.2 3-4.5 4.2-7 2.3.4 4.6.6 7 .6s4.7-.2 7-.6c1.2 2.5 2.6 4.8 4.2 7 6.3-1 12.7-3.9 19.3-8.8 2.2-17 0-31.8-6.8-45.2zM23.7 41c-3.9 0-7.1-3.6-7.1-8s3.2-8.1 7.1-8.1 7.2 3.6 7.1 8.1c0 4.4-3.2 8-7.1 8zm23.6 0c-3.9 0-7.1-3.6-7.1-8s3.2-8.1 7.1-8.1 7.2 3.6 7.1 8.1c0 4.4-3.2 8-7.1 8z" fill="#ffffff"/>
+            </svg>
+        </div>
+
+        <!-- RICH PRESENCE -->
+        <div class="rp-card" id="rpCard">
+            <div class="rp-header">Playing</div>
+            <div class="rp-body">
+                <div class="rp-icon-wrap">
+                    <img class="rp-icon" src="https://raw.githubusercontent.com/fatehdev7362/Fatehdev/refs/heads/main/cyber-security-logo-concept-vector-removebg-preview.png" alt="Activity" id="rpIcon" decoding="async" loading="lazy">
+                    <img class="rp-small-icon" src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vscode/vscode-original.svg" alt="VS Code" id="rpSmallIcon" decoding="async" loading="lazy">
+                </div>
+                <div class="rp-info">
+                    <div class="rp-title">Visual Studio Code</div>
+                    <div class="rp-detail">Editing v2security</div>
+                    <div class="rp-state">Workspace: enginer security appy</div>
+                    <div class="rp-time" id="rpTime">
+                        <span class="rp-gamepad">
+                            <img src="https://raw.githubusercontent.com/fatehdev7362/Fatehdev/refs/heads/main/game-controller-removebg-preview.png" alt="gamepad" loading="lazy">
+                        </span>
+                        <span id="rpTimeText">47:32:19</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-value">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                    <span id="viewCount">9,721</span>
+                </div>
+                <div class="stat-label">Views</div>
+            </div>
+        </div>
+
+        <!-- LANGUAGE -->
+        <div class="section" id="stack">
+            <div class="section-label">Language</div>
+            <div class="grid-flex">
+                <div class="icon-item" title="GitHub">
+                    <img src="https://raw.githubusercontent.com/fatehdev7362/Fatehdev/refs/heads/main/images-removebg-preview.png" alt="GitHub" decoding="async" loading="lazy" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+                <div class="icon-item" title="Lua"><svg viewBox="0 0 128 128" fill="none"><circle cx="64" cy="64" r="58" stroke="#ffffff" stroke-width="2" stroke-dasharray="4 4"/><circle cx="64" cy="64" r="34" stroke="#ffffff" stroke-width="1.5"/><text x="64" y="68" text-anchor="middle" fill="white" font-family="Arial" font-weight="bold" font-size="22">Lua</text></svg></div>
+                <div class="icon-item" title="PHP"><img src="https://upload.wikimedia.org/wikipedia/commons/2/27/PHP-logo.svg" alt="PHP" decoding="async" loading="lazy"></div>
+                <div class="icon-item" title="Python"><img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="Python" decoding="async" loading="lazy"></div>
+                <div class="icon-item" title="JavaScript"><img src="https://upload.wikimedia.org/wikipedia/commons/6/6a/JavaScript-logo.png" alt="JavaScript" decoding="async" loading="lazy"></div>
+                <div class="icon-item" title="C++"><img src="https://upload.wikimedia.org/wikipedia/commons/1/18/ISO_C%2B%2B_Logo.svg" alt="C++" decoding="async" loading="lazy"></div>
+                <div class="icon-item" title="HTML5"><img src="https://upload.wikimedia.org/wikipedia/commons/6/61/HTML5_logo_and_wordmark.svg" alt="HTML5" decoding="async" loading="lazy"></div>
+            </div>
+        </div>
+
+        <!-- TEAM -->
+        <div class="section" id="team-sec">
+            <div class="section-label">Team</div>
+            <div class="grid-flex">
+                <div class="icon-item team-btn" title="Anonymous Team">
+                    <img src="" alt="Team Icon" style="content: var(--url-team-anonymous);" decoding="async" loading="lazy">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- AUDIO -->
+<audio id="bgAudio" preload="auto" crossorigin="anonymous" loop>
+    <source src="https://files.catbox.moe/s49we2.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+// ========== ULTRA PERFORMANCE CONFIG ==========
+const CONFIG = { 
+    userId: "1450800858018087018",
+    videoSrc: "https://files.catbox.moe/kdasz6.mp4",
+    audioSrc: "https://files.catbox.moe/s49we2.mp3"
+};
+
+const audio = document.getElementById('bgAudio');
+const video = document.getElementById('bgVideo');
+const overlay = document.getElementById('enterOverlay');
+const main = document.getElementById('mainContainer');
+const bioCard = document.getElementById('bioCard');
+let entered = false;
+let rafIds = [];
+let intervals = [];
+
+// ========== RAF HELPER ==========
+function safeRAF(fn) {
+    const id = requestAnimationFrame(fn);
+    rafIds.push(id);
+    return id;
+}
+function safeInterval(fn, ms) {
+    const id = setInterval(fn, ms);
+    intervals.push(id);
+    return id;
+}
+function cleanup() {
+    rafIds.forEach(id => cancelAnimationFrame(id));
+    intervals.forEach(id => clearInterval(id));
+    rafIds = [];
+    intervals = [];
+}
+
+// ========== ENTER SYSTEM ==========
+function doEnter() {
+    if (entered) return;
+    entered = true;
+    overlay.classList.add('hidden');
+    main.classList.add('active');
+
+    video.load();
+    video.playbackRate = 1.0;
+    video.play().then(() => {
+        seamlessVideoLoop();
+    }).catch(() => {});
+
+    audio.load();
+    audio.volume = 0.8;
+    audio.play().catch(() => {});
+
+    safeRAF(() => {
+        setTimeout(() => {
+            bioCard.classList.add('revealed');
+        }, 200);
+    });
+}
+
+overlay.addEventListener('click', doEnter);
+document.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.code === 'Enter') && !entered) doEnter();
+});
+
+// ========== SEAMLESS VIDEO LOOP — ULTRA SMOOTH ==========
+let lastVideoTime = 0;
+function seamlessVideoLoop() {
+    if (!video.duration) {
+        safeRAF(seamlessVideoLoop);
+        return;
+    }
+    const remaining = video.duration - video.currentTime;
+    if (remaining <= 0.06 || video.currentTime < lastVideoTime) {
+        video.currentTime = 0.02;
+        video.play().catch(() => {});
+    }
+    lastVideoTime = video.currentTime;
+    safeRAF(seamlessVideoLoop);
+}
+
+// ========== AUDIO LOOP BACKUP ==========
+audio.addEventListener('ended', () => {
+    audio.currentTime = 0;
+    audio.play().catch(() => {});
+});
+
+// ========== DISCORD FETCH ==========
+const statusColors = { online: '#23a55a', idle: '#f0b232', dnd: '#f23f43', offline: '#80848e' };
+
+async function fetchDiscord() {
+    try {
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5000);
+        const response = await fetch(`https://api.lanyard.rest/v1/users/${CONFIG.userId}`, { signal: controller.signal });
+        clearTimeout(timeout);
+        const data = await response.json();
+        if (data.success && data.data) {
+            const u = data.data;
+            const nameEl = document.getElementById('discordName');
+            if (nameEl) nameEl.textContent = u.discord_user.global_name || u.discord_user.username;
+            const avatarHash = u.discord_user.avatar;
+            if (avatarHash) {
+                const avatarUrl = `https://cdn.discordapp.com/avatars/${CONFIG.userId}/${avatarHash}.webp?size=256`;
+                const avatarImg = document.getElementById('discordAvatar');
+                if (avatarImg) avatarImg.src = avatarUrl;
+            }
+            const currentStatus = u.discord_status;
+            const statusEl = document.getElementById('discordStatus');
+            if (statusEl) {
+                statusEl.textContent = currentStatus.toUpperCase();
+                statusEl.style.color = statusColors[currentStatus] || '#80848e';
+            }
+        }
+    } catch (err) { console.log("Lanyard error:", err); }
+}
+
+// ========== VS CODE RP — GLOBAL TIME (47:32:19+) ==========
+const GLOBAL_START_TIME = new Date('2026-07-01T04:40:41Z').getTime();
+let serverOffset = 0;
+let serverTimeSynced = false;
+
+async function syncServerTime() {
+    try {
+        const localStart = performance.now();
+        const res = await fetch('https://worldtimeapi.org/api/ip', { cache: 'no-store' });
+        const data = await res.json();
+        const serverUnix = data.unixtime * 1000;
+        const localEnd = performance.now();
+        const latency = (localEnd - localStart) / 2;
+        serverOffset = (serverUnix + latency) - Date.now();
+        serverTimeSynced = true;
+    } catch (e) {
+        serverOffset = 0;
+        serverTimeSynced = false;
+    }
+}
+
+function getGlobalTime() {
+    return Date.now() + serverOffset;
+}
+
+function formatElapsed(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+    return `${hours.toString().padStart(2,'0')}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+}
+
+function updateRPTime() {
+    const el = document.getElementById('rpTimeText');
+    if (!el) return;
+    const elapsed = getGlobalTime() - GLOBAL_START_TIME;
+    el.textContent = formatElapsed(elapsed);
+}
+
+// ========== GLOBAL VIEWS — CACHE + GLOBAL ==========
+const VIEW_BASE_OFFSET = 9721;
+const VIEW_CACHE_KEY = 'draigy_views_cache';
+
+async function initGlobalViews() {
+    const viewEl = document.getElementById('viewCount');
+    if (!viewEl) return;
+
+    // 1. Show cached value immediately (never blank)
+    const cached = localStorage.getItem(VIEW_CACHE_KEY);
+    if (cached) {
+        viewEl.textContent = cached;
+    } else {
+        viewEl.textContent = VIEW_BASE_OFFSET.toLocaleString();
+    }
+
+    // 2. Fetch from API in background
+    async function fetchGlobalCount() {
+        try {
+            const controller = new AbortController();
+            const timeout = setTimeout(() => controller.abort(), 6000);
+            const res = await fetch('https://api.countapi.xyz/hit/draigy-bio-2026/visits', { signal: controller.signal });
+            clearTimeout(timeout);
+            if (res.ok) {
+                const data = await res.json();
+                const total = (data.value || 0) + VIEW_BASE_OFFSET;
+                const formatted = total.toLocaleString();
+                viewEl.textContent = formatted;
+                localStorage.setItem(VIEW_CACHE_KEY, formatted);
+                return true;
+            }
+        } catch (e) {
+            console.warn('Count API failed:', e.message);
+        }
+        return false;
+    }
+
+    // 3. Try primary API
+    let success = await fetchGlobalCount();
+
+    // 4. Retry once after 2s if failed
+    if (!success) {
+        setTimeout(async () => {
+            success = await fetchGlobalCount();
+            // 5. Backup API if still failed
+            if (!success) {
+                try {
+                    const backup = await fetch('https://api.countapi.xyz/get/draigy-bio-2026/visits', { signal: (new AbortController()).signal });
+                    if (backup.ok) {
+                        const data = await backup.json();
+                        const total = (data.value || 0) + VIEW_BASE_OFFSET;
+                        const formatted = total.toLocaleString();
+                        viewEl.textContent = formatted;
+                        localStorage.setItem(VIEW_CACHE_KEY, formatted);
+                    }
+                } catch (e2) {}
+            }
+        }, 2000);
+    }
+}
+
+// ========== PARALLAX MOUSE — 240FPS READY ==========
+let mouseX = 0, mouseY = 0;
+let currentX = 0, currentY = 0;
+let targetRotateX = 0, targetRotateY = 0;
+let currentRotateX = 0, currentRotateY = 0;
+let mouseActive = false;
+let mouseTimeout = null;
+
+document.addEventListener('mousemove', (e) => {
+    mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+    mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    mouseActive = true;
+    clearTimeout(mouseTimeout);
+    mouseTimeout = setTimeout(() => { mouseActive = false; }, 100);
+});
+
+function animateFrame() {
+    if (mouseActive) {
+        currentX += (mouseX - currentX) * 0.04;
+        currentY += (mouseY - currentY) * 0.04;
+        targetRotateX = currentY * -2;
+        targetRotateY = currentX * 2;
+        currentRotateX += (targetRotateX - currentRotateX) * 0.08;
+        currentRotateY += (targetRotateY - currentRotateY) * 0.08;
+        if (bioCard) {
+            bioCard.style.transform = `perspective(1200px) rotateX(${currentRotateX.toFixed(2)}deg) rotateY(${currentRotateY.toFixed(2)}deg) translateZ(0)`;
+        }
+    }
+    safeRAF(animateFrame);
+}
+
+// ========== VIDEO SMOOTH SCALE ==========
+let videoScale = 1.0;
+let scaleTarget = 1.02;
+function animateVideo() {
+    videoScale += (scaleTarget - videoScale) * 0.01;
+    if (Math.abs(scaleTarget - videoScale) < 0.001) {
+        scaleTarget = scaleTarget === 1.02 ? 1.0 : 1.02;
+    }
+    if (video) {
+        video.style.transform = `translate(-50%, -50%) scale(${videoScale.toFixed(4)}) translateZ(0)`;
+    }
+    safeRAF(animateVideo);
+}
+
+// ========== RESET ON LEAVE ==========
+document.addEventListener('mouseleave', () => {
+    mouseX = 0;
+    mouseY = 0;
+});
+
+// ========== VISIBILITY API — ULTRA EFFICIENT ==========
+let wasHidden = false;
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        wasHidden = true;
+        if (video) video.pause();
+        if (audio) audio.pause();
+    } else {
+        if (video) video.play().catch(() => {});
+        if (audio) audio.play().catch(() => {});
+        if (wasHidden) {
+            wasHidden = false;
+            syncServerTime();
+        }
+    }
+});
+
+// ========== INTERSECTION OBSERVER — LAZY LOAD ==========
+const imageObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const img = entry.target;
+            if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+            }
+            imageObserver.unobserve(img);
+        }
+    });
+}, { rootMargin: '50px' });
+
+document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+    if (img.src) {
+        img.dataset.src = img.src;
+        img.src = '';
+        imageObserver.observe(img);
+    }
+});
+
+// ========== ERROR RECOVERY ==========
+window.addEventListener('error', (e) => {
+    console.warn('Bio error:', e.message);
+});
+window.addEventListener('unhandledrejection', (e) => {
+    console.warn('Bio promise error:', e.reason);
+});
+
+// ========== INIT ==========
+window.addEventListener('DOMContentLoaded', () => {
+    video.load();
+    video.playbackRate = 1.0;
+    audio.load();
+    syncServerTime().then(() => {
+        updateRPTime();
+        safeInterval(updateRPTime, 1000);
+    });
+    fetchDiscord();
+    initGlobalViews();
+    safeInterval(fetchDiscord, 15000);
+    safeInterval(syncServerTime, 300000); // resync every 5 min
+    safeRAF(animateFrame);
+    safeRAF(animateVideo);
+});
+
+// ========== BEFORE UNLOAD CLEANUP ==========
+window.addEventListener('beforeunload', cleanup);
+</script>
+</body>
+</html>
